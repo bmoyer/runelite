@@ -46,10 +46,10 @@ import javax.inject.Inject;
 )
 public class PlayerOwnedHousePlugin extends Plugin
 {
-    /*
 	@Inject
 	private PlayerOwnedHouseOverlay overlay;
 
+	/*
 	@Override
 	public void configure(Binder binder)
 	{
@@ -62,13 +62,12 @@ public class PlayerOwnedHousePlugin extends Plugin
 	{
 		return configManager.getConfig(PlayerOwnedHouseConfig.class);
 	}
-	/*
 
 	@Override
 	protected void startUp() throws Exception
 	{
 		// Initialize overlay config
-		overlay.updateConfig();
+		//overlay.updateConfig();
 	}
 
 	@Override
@@ -77,11 +76,11 @@ public class PlayerOwnedHousePlugin extends Plugin
 		return overlay;
 	}
 
+	/*
 	@Subscribe
 	public void updateConfig(ConfigChanged event)
 	{
 		overlay.updateConfig();
 	}
 	*/
-
 }
