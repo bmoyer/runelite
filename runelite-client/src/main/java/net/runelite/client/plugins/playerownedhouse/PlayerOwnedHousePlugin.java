@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2017, Robin <robin.weymans@gmail.com> 
+ * Copyright (c) 2018, bmoyer <ben.s.moyer@gmail.com>
  * All rights reserved. 
  * 
  * Redistribution and use in source and binary forms, with or without 

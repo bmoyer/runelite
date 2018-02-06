@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2017, Robin <robin.weymans@gmail.com> 
+ * Copyright (c) 2018, bmoyer <ben.s.moyer@gmail.com>
  * All rights reserved. 
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -31,7 +31,7 @@ import net.runelite.client.config.ConfigItem;
 
 /**
  *
- * @author robin
+ * @author bmoyer
  */
 @ConfigGroup(
 	keyName = "playerownedhouse",
@@ -53,39 +53,30 @@ public interface PlayerOwnedHouseConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 0,
+			position = 1,
 			keyName = "Highlight altar burners when out",
 			name = "Highlight Burners",
 			description = "Configures whether or not altar burners are highlighted once extinguished"
 	)
 
-	default boolean highlightBurners()
+	default boolean getHighlightBurners()
 	{
 		return false;
+	}
+
+	@ConfigItem(
+			position = 2,
+			keyName = "burnerColor",
+			name = "Burner color",
+			description = "Color to highlight extinguished burners"
+
+	)
+
+	default Color getBurnerColor()
+	{
+	    return Color.RED;
 	}
     /*
-	@ConfigItem(
-		position = 0,
-		keyName = "enabled",
-		name = "Enabled",
-		description = "Configures whether or not the impling plugin is enabled"
-	)
-	default boolean enabled()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-		position = 1,
-		keyName = "showbaby",
-		name = "Show Baby implings",
-		description = "Configures whether or not Baby impling tags are displayed"
-	)
-	default boolean showBaby()
-	{
-		return false;
-	}
-
 	@ConfigItem(
 		position = 2,
 		keyName = "babyColor",

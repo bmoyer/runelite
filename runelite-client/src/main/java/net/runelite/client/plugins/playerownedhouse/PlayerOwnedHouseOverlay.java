@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Robin <robin.weymans@gmail.com>
+ * Copyright (c) 2018, bmoyer <ben.s.moyer@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -75,22 +76,29 @@ public class PlayerOwnedHouseOverlay extends Overlay
 		}
 
 
-		for(GameObject burner : plugin.getBurners())
+		if(config.getHighlightBurners())
 		{
-			Polygon poly = Perspective.getCanvasTilePoly(client, burner.getLocalLocation());
-
-			if (poly != null)
-			{
-				OverlayUtil.renderPolygon(graphics, poly, Color.red);
-			}
+		    drawBurnerTiles(graphics);
 		}
-
 		//panelComponent.getLines().clear();
 		//panelComponent.setTitle("POH Plugin Active");
 
 		//return panelComponent.render(graphics, parent);
 
 		return null;
+	}
+
+	public void drawBurnerTiles(Graphics2D graphics)
+	{
+		for(GameObject burner : plugin.getBurners())
+		{
+			Polygon poly = Perspective.getCanvasTilePoly(client, burner.getLocalLocation());
+
+			if (poly != null)
+			{
+				OverlayUtil.renderPolygon(graphics, poly, config.getBurnerColor());
+			}
+		}
 	}
 
 	public void updateConfig()
