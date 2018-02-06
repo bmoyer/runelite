@@ -24,10 +24,15 @@
  */
 package net.runelite.client.plugins.playerownedhouse;
 
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Binder;
 import com.google.inject.Provides;
-import net.runelite.api.events.ConfigChanged;
+import lombok.AccessLevel;
+import lombok.Getter;
+import net.runelite.api.GameObject;
+import net.runelite.api.GameState;
+import net.runelite.api.events.*;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -36,6 +41,10 @@ import net.runelite.client.plugins.playerownedhouse.PlayerOwnedHouseConfig;
 import net.runelite.client.ui.overlay.Overlay;
 
 import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.Set;
+
+import static net.runelite.api.ObjectID.INCENSE_BURNER_13212;
 
 /**
  *
@@ -46,9 +55,13 @@ import javax.inject.Inject;
 )
 public class PlayerOwnedHousePlugin extends Plugin
 {
+	private static final Set<Integer> BURNER_OBJECTS = Sets.newHashSet(INCENSE_BURNER_13212);
+
 	@Inject
 	private PlayerOwnedHouseOverlay overlay;
 
+	@Getter(AccessLevel.PACKAGE)
+	private final Set<GameObject> burners = new HashSet<>();
 	/*
 	@Override
 	public void configure(Binder binder)
@@ -74,6 +87,45 @@ public class PlayerOwnedHousePlugin extends Plugin
 	public Overlay getOverlay()
 	{
 		return overlay;
+	}
+
+
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned event)
+	{
+		GameObject gameObject = event.getGameObject();
+		if (BURNER_OBJECTS.contains(gameObject.getId()))
+		{
+			burners.add(gameObject);
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectChanged(GameObjectChanged event)
+	{
+		GameObject previous = event.getPrevious();
+		GameObject gameObject = event.getGameObject();
+
+		burners.remove(previous);
+		if (BURNER_OBJECTS.contains(gameObject.getId()))
+		{
+			burners.add(gameObject);
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned event)
+	{
+		GameObject gameObject = event.getGameObject();
+		burners.remove(gameObject);
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		if (event.getGameState() == GameState.LOADING) {
+			burners.clear();
+		}
 	}
 
 	/*

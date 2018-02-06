@@ -33,6 +33,7 @@ import net.runelite.client.plugins.playerownedhouse.PlayerOwnedHouseConfig;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.OverlayUtil;
 import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.util.QueryRunner;
 
@@ -47,10 +48,6 @@ import java.util.Map;
  */
 public class PlayerOwnedHouseOverlay extends Overlay
 {
-
-	private static final int STATIC_SPAWN = 1618;
-	private static final int DYNAMIC_SPAWN = 1633;
-
 	private final Client client;
 	private final PlayerOwnedHousePlugin plugin;
 	private final PlayerOwnedHouseConfig config;
@@ -77,12 +74,23 @@ public class PlayerOwnedHouseOverlay extends Overlay
 	    	return null;
 		}
 
-		panelComponent.getLines().clear();
-		panelComponent.setTitle("POH Plugin Active");
 
-		return panelComponent.render(graphics, parent);
+		for(GameObject burner : plugin.getBurners())
+		{
+			Polygon poly = Perspective.getCanvasTilePoly(client, burner.getLocalLocation());
 
-		//return null;
+			if (poly != null)
+			{
+				OverlayUtil.renderPolygon(graphics, poly, Color.red);
+			}
+		}
+
+		//panelComponent.getLines().clear();
+		//panelComponent.setTitle("POH Plugin Active");
+
+		//return panelComponent.render(graphics, parent);
+
+		return null;
 	}
 
 	public void updateConfig()
