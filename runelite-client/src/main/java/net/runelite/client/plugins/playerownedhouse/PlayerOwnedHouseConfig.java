@@ -76,6 +76,18 @@ public interface PlayerOwnedHouseConfig extends Config
 	{
 	    return Color.RED;
 	}
+
+	@ConfigItem(
+			position = 3,
+			keyName = "hideBury",
+			name = "Hide bury option from bones",
+			description = "Removes Bury option from bones and makes the first option Use"
+	)
+
+	default boolean getHideBury ()
+	{
+		return false;
+	}
     /*
 	@ConfigItem(
 		position = 2,

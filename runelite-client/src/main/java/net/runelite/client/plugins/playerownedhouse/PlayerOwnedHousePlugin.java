@@ -30,25 +30,32 @@ import com.google.inject.Binder;
 import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
+import net.runelite.api.Client;
 import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.events.*;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.plugins.barbarianassault.Calls;
 import net.runelite.client.plugins.playerownedhouse.PlayerOwnedHouseConfig;
 //import net.runelite.client.plugins.implings.PlayerOwnedHouseOverlay;
 import net.runelite.client.ui.overlay.Overlay;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static net.runelite.api.ObjectID.INCENSE_BURNER_13212;
 
 /**
  *
- * @author robin
+ * @author bmoyer
  */
 @PluginDescriptor(
 	name = "PlayerOwnedHouse plugin"
@@ -56,19 +63,25 @@ import static net.runelite.api.ObjectID.INCENSE_BURNER_13212;
 public class PlayerOwnedHousePlugin extends Plugin
 {
 	private static final Set<Integer> BURNER_OBJECTS = Sets.newHashSet(INCENSE_BURNER_13212);
+	private final List<MenuEntry> entries = new ArrayList<>();
 
 	@Inject
 	private PlayerOwnedHouseOverlay overlay;
 
+	@Inject
+	private Client client;
+
+	@Inject
+	private PlayerOwnedHouseConfig config;
+
 	@Getter(AccessLevel.PACKAGE)
 	private final Set<GameObject> burners = new HashSet<>();
-	/*
+
 	@Override
 	public void configure(Binder binder)
 	{
 		binder.bind(PlayerOwnedHouseOverlay.class);
 	}
-	*/
 
 	@Provides
 	PlayerOwnedHouseConfig getConfig(ConfigManager configManager)
@@ -128,11 +141,22 @@ public class PlayerOwnedHousePlugin extends Plugin
 		}
 	}
 
-	/*
 	@Subscribe
-	public void updateConfig(ConfigChanged event)
+	public void onMenuOpen(MenuEntryAdded event)
 	{
-		overlay.updateConfig();
+		if (config.enabled() && config.getHideBury())
+		{
+			MenuEntry[] menuEntries = client.getMenuEntries();
+			entries.clear();
+			for (MenuEntry entry : menuEntries)
+			{
+				String option = entry.getOption();
+				if (!option.startsWith("Bury"))
+				{
+					entries.add(entry);
+				}
+			}
+            client.setMenuEntries(entries.toArray(new MenuEntry[entries.size()]));
+		}
 	}
-	*/
 }
