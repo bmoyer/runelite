@@ -24,24 +24,18 @@
  */
 package net.runelite.client.plugins.playerownedhouse;
 
-import com.google.common.primitives.Ints;
 import lombok.Getter;
 import net.runelite.api.*;
-import net.runelite.api.Point;
-import net.runelite.api.queries.NPCQuery;
-import net.runelite.client.plugins.playerownedhouse.PlayerOwnedHouseConfig;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayUtil;
 import net.runelite.client.ui.overlay.components.PanelComponent;
-import net.runelite.client.util.QueryRunner;
 
 import javax.inject.Inject;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -52,8 +46,6 @@ public class PlayerOwnedHouseOverlay extends Overlay
 	private final Client client;
 	private final PlayerOwnedHousePlugin plugin;
 	private final PlayerOwnedHouseConfig config;
-
-	private final PanelComponent panelComponent = new PanelComponent();
 
 	@Getter
 	private final Map<Integer, Color> ids = new HashMap<>();
@@ -80,11 +72,6 @@ public class PlayerOwnedHouseOverlay extends Overlay
 		{
 		    drawBurnerTiles(graphics);
 		}
-		//panelComponent.getLines().clear();
-		//panelComponent.setTitle("POH Plugin Active");
-
-		//return panelComponent.render(graphics, parent);
-
 		return null;
 	}
 

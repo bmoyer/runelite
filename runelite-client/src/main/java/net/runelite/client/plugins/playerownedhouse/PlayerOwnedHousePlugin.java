@@ -35,14 +35,9 @@ import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.events.*;
-import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.barbarianassault.Calls;
-import net.runelite.client.plugins.playerownedhouse.PlayerOwnedHouseConfig;
-//import net.runelite.client.plugins.implings.PlayerOwnedHouseOverlay;
 import net.runelite.client.ui.overlay.Overlay;
 
 import javax.inject.Inject;
@@ -92,8 +87,6 @@ public class PlayerOwnedHousePlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		// Initialize overlay config
-		//overlay.updateConfig();
 	}
 
 	@Override
