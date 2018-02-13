@@ -28,7 +28,9 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import net.runelite.api.Client;
+import net.runelite.api.Skill;
 import net.runelite.api.Varbits;
+import net.runelite.api.events.ExperienceChanged;
 import net.runelite.api.events.WidgetHiddenChanged;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
@@ -36,6 +38,8 @@ import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import java.util.Arrays;
+import java.util.List;
 
 @PluginDescriptor(
 	name = "Experience drop plugin"
@@ -47,6 +51,9 @@ public class ExperienceDropPlugin extends Plugin
 
 	@Inject
 	private ExperienceDropConfig config;
+
+	private Skill lastXpGained = null;
+	private List<Skill> combatSkills = Arrays.asList(Skill.ATTACK, Skill.STRENGTH, Skill.DEFENCE, Skill.HITPOINTS, Skill.RANGED, Skill.MAGIC);
 
 	@Provides
 	ExperienceDropConfig provideConfig(ConfigManager configManager)
@@ -72,7 +79,7 @@ public class ExperienceDropPlugin extends Plugin
 			return;
 		}
 
-		if (prayer == null)
+		if (prayer == null || !combatSkills.contains(lastXpGained))
 		{
 			resetTextColor(widget);
 			return;
@@ -114,4 +121,11 @@ public class ExperienceDropPlugin extends Plugin
 		}
 		return null;
 	}
+
+	@Subscribe
+	public void onExperienceChanged(ExperienceChanged event)
+	{
+		lastXpGained = event.getSkill();
+	}
+
 }
