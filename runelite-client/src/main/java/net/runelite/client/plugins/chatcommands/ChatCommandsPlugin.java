@@ -28,6 +28,7 @@ package net.runelite.client.plugins.chatcommands;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Provides;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -175,7 +176,10 @@ public class ChatCommandsPlugin extends Plugin
 		// being reused
 		messageNode.setRuneLiteFormatMessage(null);
 
-		if (config.lvl() && message.toLowerCase().equals("!total"))
+		if(message.toLowerCase().contains(client.getLocalPlayer().getName().toLowerCase())){
+			executor.submit(() -> playerNameFilter(setMessage.getType(), setMessage, message));
+		}
+		else if (config.lvl() && message.toLowerCase().equals("!total"))
 		{
 			log.debug("Running total level lookup");
 			executor.submit(() -> playerSkillLookup(setMessage.getType(), setMessage, "total"));
@@ -331,6 +335,36 @@ public class ChatCommandsPlugin extends Plugin
 		{
 			log.warn("unable to look up skill {} for {}", skill, search, ex);
 		}
+	}
+
+	private void playerNameFilter(ChatMessageType type, SetMessage setMessage, String message)
+	{
+	    	String response = highlightPlayerName(message);
+			log.debug("Setting response {}", response);
+			final MessageNode messageNode = setMessage.getMessageNode();
+			messageNode.setRuneLiteFormatMessage(response);
+			chatMessageManager.update(messageNode);
+			client.refreshChat();
+	}
+
+	private String highlightPlayerName(String message)
+	{
+		String rsnLc = client.getLocalPlayer().getName().toLowerCase();
+		ChatMessageBuilder builder = new ChatMessageBuilder();
+		int i = 0;
+		while(i < message.length()) {
+			if(message.toLowerCase().indexOf(rsnLc, i) == i) {
+				builder.append(ChatColorType.HIGHLIGHT);
+				builder.append(client.getLocalPlayer().getName());
+				i += rsnLc.length();
+			}
+			else {
+				builder.append(ChatColorType.NORMAL);
+				builder.append(String.valueOf(message.charAt(i)));
+				i++;
+			}
+		}
+		return builder.build();
 	}
 
 	/**
