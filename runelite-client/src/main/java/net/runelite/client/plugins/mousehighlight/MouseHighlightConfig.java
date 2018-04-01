@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2018, Morgan Lewis <https://github.com/MESLewis>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,26 +22,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api;
+package net.runelite.client.plugins.mousehighlight;
 
-import java.awt.Polygon;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
 
-public interface Player extends Actor
+@ConfigGroup(
+	keyName = "mousehighlight",
+	name = "Mouse Tooltips",
+	description = "Configures the Mouse Tooltips plugin"
+)
+public interface MouseHighlightConfig extends Config
 {
-	@Override
-	int getCombatLevel();
+	@ConfigItem(
+		position = 0,
+		keyName = "uiTooltip",
+		name = "Interface Tooltips",
+		description = "Whether or not tooltips are shown on interfaces"
+	)
+	default boolean uiTooltip()
+	{
+		return true;
+	}
 
-	String getCleanName();
-
-	void setName(String name);
-
-	PlayerComposition getPlayerComposition();
-
-	Polygon[] getPolygons();
-
-	int getTeam();
-
-	boolean isClanMember();
-
-	boolean isFriend();
+	@ConfigItem(
+		position = 1,
+		keyName = "chatboxTooltip",
+		name = "Chatbox Tooltips",
+		description = "Whether or not tooltips are shown over the chatbox"
+	)
+	default boolean chatboxTooltip()
+	{
+		return true;
+	}
 }

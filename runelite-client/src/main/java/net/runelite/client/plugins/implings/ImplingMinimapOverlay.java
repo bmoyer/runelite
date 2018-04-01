@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2018, Seth <http://github.com/sethtroll>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,26 +22,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api;
+package net.runelite.client.plugins.implings;
 
-import java.awt.Polygon;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import javax.inject.Inject;
+import net.runelite.api.NPC;
+import net.runelite.api.Point;
+import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.OverlayLayer;
+import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.OverlayUtil;
 
-public interface Player extends Actor
+public class ImplingMinimapOverlay extends Overlay
 {
+	private final ImplingsPlugin plugin;
+
+	@Inject
+	private ImplingMinimapOverlay(ImplingsPlugin plugin)
+	{
+		setPosition(OverlayPosition.DYNAMIC);
+		setLayer(OverlayLayer.ABOVE_WIDGETS);
+		this.plugin = plugin;
+	}
+
 	@Override
-	int getCombatLevel();
+	public Dimension render(Graphics2D graphics)
+	{
+		NPC[] imps = plugin.getImplings();
+		if (imps == null)
+		{
+			return null;
+		}
 
-	String getCleanName();
+		for (NPC imp : imps)
+		{
+			Point minimapLocation = imp.getMinimapLocation();
+			if (minimapLocation != null)
+			{
+				OverlayUtil.renderMinimapLocation(graphics, minimapLocation, plugin.getIds().get(imp.getId()));
+			}
+		}
 
-	void setName(String name);
-
-	PlayerComposition getPlayerComposition();
-
-	Polygon[] getPolygons();
-
-	int getTeam();
-
-	boolean isClanMember();
-
-	boolean isFriend();
+		return null;
+	}
 }

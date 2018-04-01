@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2018, Tomas Slusny <slusnucky@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,26 +22,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api;
+package net.runelite.client.plugins.grounditems;
 
-import java.awt.Polygon;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Value;
+import net.runelite.api.coords.WorldPoint;
 
-public interface Player extends Actor
+@Data
+@Builder
+class GroundItem
 {
-	@Override
-	int getCombatLevel();
+	private int id;
+	private int itemId;
+	private String name;
+	private int quantity;
+	private WorldPoint location;
+	private int haPrice;
+	private int gePrice;
 
-	String getCleanName();
-
-	void setName(String name);
-
-	PlayerComposition getPlayerComposition();
-
-	Polygon[] getPolygons();
-
-	int getTeam();
-
-	boolean isClanMember();
-
-	boolean isFriend();
+	@Value
+	static class GroundItemKey
+	{
+		private int itemId;
+		private WorldPoint location;
+	}
 }
