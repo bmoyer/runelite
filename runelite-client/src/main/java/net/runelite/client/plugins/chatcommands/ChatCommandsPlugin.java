@@ -182,9 +182,18 @@ public class ChatCommandsPlugin extends Plugin
 		// being reused
 		messageNode.setRuneLiteFormatMessage(null);
 
-		if(message.toLowerCase().contains(client.getLocalPlayer().getName().toLowerCase())){
-			List<String> hls = highlightWords;
-			executor.submit(() -> playerNameFilter(setMessage.getType(), setMessage, message));
+		List<String> words = new ArrayList<>();
+		for(String s : highlightWords) {
+		    if(message.toLowerCase().contains(s.toLowerCase())) {
+		    	words.add(s);
+			}
+		}
+		if(config.getHighlightRsn() && message.toLowerCase().contains(client.getLocalPlayer().getName().toLowerCase())) {
+		    words.add(client.getLocalPlayer().getName());
+		}
+		if(!words.isEmpty())
+		{
+			executor.submit(() -> playerNameFilter(setMessage.getType(), setMessage, message, words));
 		}
 		else if (config.lvl() && message.toLowerCase().equals("!total"))
 		{
@@ -344,9 +353,9 @@ public class ChatCommandsPlugin extends Plugin
 		}
 	}
 
-	private void playerNameFilter(ChatMessageType type, SetMessage setMessage, String message)
+	private void playerNameFilter(ChatMessageType type, SetMessage setMessage, String message, List<String> hlWords)
 	{
-	    	String response = highlightPlayerName(message);
+	    	String response = highlightPlayerName(message, hlWords);
 			log.debug("Setting response {}", response);
 			final MessageNode messageNode = setMessage.getMessageNode();
 			messageNode.setRuneLiteFormatMessage(response);
@@ -354,18 +363,25 @@ public class ChatCommandsPlugin extends Plugin
 			client.refreshChat();
 	}
 
-	private String highlightPlayerName(String message)
+	private String highlightPlayerName(String message, List<String> hlWords)
 	{
-		String rsnLc = client.getLocalPlayer().getName().toLowerCase();
 		ChatMessageBuilder builder = new ChatMessageBuilder();
 		int i = 0;
 		while(i < message.length()) {
-			if(message.toLowerCase().indexOf(rsnLc, i) == i) {
-				builder.append(ChatColorType.HIGHLIGHT);
-				builder.append(client.getLocalPlayer().getName());
-				i += rsnLc.length();
+		    boolean matched = false;
+		    for(String w : hlWords)
+			{
+			    if(matched)
+			    	break;
+				if(message.toLowerCase().indexOf(w.toLowerCase(), i) == i) {
+					builder.append(ChatColorType.HIGHLIGHT);
+					builder.append(w);
+					i += w.length();
+					matched = true;
+				}
 			}
-			else {
+
+			if(!matched){
 				builder.append(ChatColorType.NORMAL);
 				builder.append(String.valueOf(message.charAt(i)));
 				i++;
