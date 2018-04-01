@@ -29,6 +29,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Provides;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -69,6 +70,8 @@ public class ChatCommandsPlugin extends Plugin
 
 	private final HiscoreClient hiscoreClient = new HiscoreClient();
 
+	private List<String> highlightWords = new ArrayList<String>();
+
 	@Inject
 	private Client client;
 
@@ -87,7 +90,7 @@ public class ChatCommandsPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
-		cacheConfiguredColors();
+		cacheHighlightOptions();
 		chatMessageManager.refreshAll();
 	}
 
@@ -102,7 +105,7 @@ public class ChatCommandsPlugin extends Plugin
 	{
 		if (event.getGameState().equals(GameState.LOGIN_SCREEN))
 		{
-			cacheConfiguredColors();
+			cacheHighlightOptions();
 		}
 	}
 
@@ -111,12 +114,13 @@ public class ChatCommandsPlugin extends Plugin
 	{
 		if (event.getGroup().equals("chatcommands"))
 		{
-			cacheConfiguredColors();
+			cacheHighlightOptions();
+
 			chatMessageManager.refreshAll();
 		}
 	}
 
-	private void cacheConfiguredColors()
+	private void cacheHighlightOptions()
 	{
 		chatMessageManager
 			.cacheColor(new ChatColor(ChatColorType.NORMAL, config.getPublicRecolor(), false),
@@ -143,6 +147,8 @@ public class ChatCommandsPlugin extends Plugin
 				ChatMessageType.CLANCHAT)
 			.cacheColor(new ChatColor(ChatColorType.HIGHLIGHT, config.getTransparentCcHRecolor(), true),
 				ChatMessageType.CLANCHAT);
+
+		highlightWords = Arrays.asList(config.getHighlightKeywords().split((",")));
 	}
 
 	/**
@@ -177,6 +183,7 @@ public class ChatCommandsPlugin extends Plugin
 		messageNode.setRuneLiteFormatMessage(null);
 
 		if(message.toLowerCase().contains(client.getLocalPlayer().getName().toLowerCase())){
+			List<String> hls = highlightWords;
 			executor.submit(() -> playerNameFilter(setMessage.getType(), setMessage, message));
 		}
 		else if (config.lvl() && message.toLowerCase().equals("!total"))

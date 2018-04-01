@@ -189,4 +189,26 @@ public interface ChatCommandsConfig extends Config
 	{
 		return Color.decode("#FFFFFF");
 	}
+
+	@ConfigItem(
+			position = 14,
+			keyName = "highlightRsn",
+			name = "Highlight RSN",
+			description = "Configures whether player's RSN is highlighted in chat messages"
+	)
+
+	default boolean getHighlightRsn() {
+		return true;
+	}
+
+	@ConfigItem(
+			position = 15,
+			keyName = "highlightKeywords",
+			name = "Highlighted keywords",
+			description = "Words in chat to highlight when they appear"
+	)
+
+	default String getHighlightKeywords() {
+		return "";
+	}
 }
