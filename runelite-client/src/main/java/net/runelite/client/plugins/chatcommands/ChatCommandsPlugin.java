@@ -71,6 +71,7 @@ public class ChatCommandsPlugin extends Plugin
 	private final HiscoreClient hiscoreClient = new HiscoreClient();
 
 	private List<String> highlightWords = new ArrayList<String>();
+	private boolean highlightRsn = false;
 
 	@Inject
 	private Client client;
@@ -149,6 +150,11 @@ public class ChatCommandsPlugin extends Plugin
 				ChatMessageType.CLANCHAT);
 
 		highlightWords = Arrays.asList(config.getHighlightKeywords().split((",")));
+		highlightRsn = config.getHighlightRsn();
+		if(config.getHighlightRsn())
+		{
+			//highlightWords.add(client.getLocalPlayer().getName());
+		}
 	}
 
 	/**
@@ -188,7 +194,8 @@ public class ChatCommandsPlugin extends Plugin
 		    	words.add(s);
 			}
 		}
-		if(config.getHighlightRsn() && message.toLowerCase().contains(client.getLocalPlayer().getName().toLowerCase())) {
+		//if(config.getHighlightRsn() && message.toLowerCase().contains(client.getLocalPlayer().getName().toLowerCase())) {
+		if(highlightRsn && message.toLowerCase().contains(client.getLocalPlayer().getName().toLowerCase())) {
 		    words.add(client.getLocalPlayer().getName());
 		}
 		if(!words.isEmpty())
