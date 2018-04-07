@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Tomas Slusny <slusnucky@gmail.com>
+ * Copyright (c) 2018 Abex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,10 +24,7 @@
  */
 package net.runelite.api;
 
-public class PlayerNameMask
+public final class ScriptID
 {
-	public static final int DRAW_FRIEND_NAME = 1;
-	public static final int DRAW_CLAN_NAME = 2;
-	public static final int DRAW_ALL_EXCEPT_OWN_NAME = 4;
-	public static final int DRAW_OWN_NAME = 8;
+	public static final int RUNELITE_CHATBOX_INPUT_INIT = 10001;
 }

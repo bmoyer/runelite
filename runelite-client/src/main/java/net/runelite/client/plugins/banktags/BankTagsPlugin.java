@@ -28,21 +28,21 @@ import com.google.common.eventbus.Subscribe;
 import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.IntegerNode;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
+import net.runelite.api.ItemComposition;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.MenuAction;
 import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.events.ScriptEvent;
+import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetConfig;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.game.ChatboxInputManager;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -75,6 +75,9 @@ public class BankTagsPlugin extends Plugin
 
 	@Inject
 	private ConfigManager configManager;
+
+	@Inject
+	private ChatboxInputManager chatboxInputManager;
 
 	private String getTags(int itemId)
 	{
@@ -109,7 +112,7 @@ public class BankTagsPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onScriptEvent(ScriptEvent event)
+	public void onScriptEvent(ScriptCallbackEvent event)
 	{
 		String eventName = event.getEventName();
 
@@ -152,6 +155,13 @@ public class BankTagsPlugin extends Plugin
 				int itemId = intStack[intStackSize - 1];
 				String itemName = stringStack[stringStackSize - 2];
 				String searchInput = stringStack[stringStackSize - 1];
+
+				ItemComposition itemComposition = itemManager.getItemComposition(itemId);
+				if (itemComposition.getPlaceholderTemplateId() != -1)
+				{
+					// if the item is a placeholder then get the item id for the normal item
+					itemId = itemComposition.getPlaceholderId();
+				}
 
 				String tagsConfig = configManager.getConfiguration(CONFIG_GROUP, ITEM_KEY_PREFIX + itemId);
 				if (tagsConfig == null || tagsConfig.length() == 0)
@@ -209,14 +219,24 @@ public class BankTagsPlugin extends Plugin
 			{
 				return;
 			}
-			int itemId = item.getId();
-			String itemName = itemManager.getItemComposition(itemId).getName();
-			String initialValue = getTags(itemId);
-			SwingUtilities.invokeLater(() ->
+			ItemComposition itemComposition = itemManager.getItemComposition(item.getId());
+			int itemId;
+			if (itemComposition.getPlaceholderTemplateId() != -1)
 			{
-				String newTags = (String) JOptionPane.showInputDialog(client.getCanvas(), null,
-					"Edit " + itemName + " Tags", JOptionPane.PLAIN_MESSAGE, null, null,
-					initialValue);
+				// if the item is a placeholder then get the item id for the normal item
+				itemId = itemComposition.getPlaceholderId();
+			}
+			else
+			{
+				itemId = item.getId();
+			}
+
+			String itemName = itemComposition.getName();
+
+			String initialValue = getTags(itemId);
+
+			chatboxInputManager.openInputWindow(itemName + " Tags", initialValue, (newTags) ->
+			{
 				if (newTags == null)
 				{
 					return;
@@ -234,7 +254,8 @@ public class BankTagsPlugin extends Plugin
 				}
 				Widget bankItemWidget = bankItemWidgets[inventoryIndex];
 				String[] actions = bankItemWidget.getActions();
-				if (actions == null || EDIT_TAGS_MENU_INDEX - 1 >= actions.length)
+				if (actions == null || EDIT_TAGS_MENU_INDEX - 1 >= actions.length
+						|| itemId != bankItemWidget.getItemId())
 				{
 					return;
 				}

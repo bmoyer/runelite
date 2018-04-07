@@ -41,6 +41,8 @@ public interface Client extends GameEngine
 
 	NPC[] getCachedNPCs();
 
+	Player[] getCachedPlayers();
+
 	int getBoostedSkillLevel(Skill skill);
 
 	int getRealSkillLevel(Skill skill);
@@ -75,6 +77,10 @@ public interface Client extends GameEngine
 	int getViewportHeight();
 
 	int getViewportWidth();
+
+	int getViewportXOffset();
+
+	int getViewportYOffset();
 
 	int getScale();
 
@@ -351,7 +357,5 @@ public interface Client extends GameEngine
 
 	SpritePixels drawInstanceMap(int z);
 
-	void setPlayerNameMask(int mask);
-
-	int getPlayerNameMask();
+	void runScript(int id, Object... args);
 }

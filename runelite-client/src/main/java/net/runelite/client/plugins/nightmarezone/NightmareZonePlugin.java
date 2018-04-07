@@ -39,7 +39,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.Overlay;
-import net.runelite.api.Text;
+import net.runelite.client.util.Text;
 
 @PluginDescriptor(
 	name = "Nightmare Zone"
@@ -93,6 +93,11 @@ public class NightmareZonePlugin extends Plugin
 	{
 		if (!isInNightmareZone())
 		{
+			if (!absorptionNotificationSend)
+			{
+				absorptionNotificationSend = true;
+			}
+
 			return;
 		}
 		if (config.absorptionNotification())

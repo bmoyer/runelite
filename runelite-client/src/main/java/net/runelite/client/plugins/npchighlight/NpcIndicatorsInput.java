@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Joshua Filby <joshua@filby.me>
+ * Copyright (c) 2018, Seth <http://github.com/sethtroll>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,44 +22,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api;
+package net.runelite.client.plugins.npchighlight;
 
-/**
- * A set of utilities to use when dealing with text.
- */
-public class Text
+import java.awt.event.KeyEvent;
+import javax.inject.Inject;
+import net.runelite.client.input.KeyListener;
+
+public class NpcIndicatorsInput implements KeyListener
 {
+	private static final int HOTKEY = KeyEvent.VK_SHIFT;
 
-	/**
-	 * Removes all tags from the given `str`.
-	 *
-	 * @param str The string to remove tags from.
-	 * @return The given `str` with all tags removed from it.
-	 */
-	public static String removeTags(String str)
+	@Inject
+	private NpcIndicatorsPlugin plugin;
+
+	@Override
+	public void keyTyped(KeyEvent e)
 	{
-		StringBuilder builder = new StringBuilder(str.length());
-		boolean inTag = false;
 
-		for (int i = 0; i < str.length(); i++)
-		{
-			char currentChar = str.charAt(i);
-
-			if (currentChar == '<')
-			{
-				inTag = true;
-			}
-			else if (currentChar == '>')
-			{
-				inTag = false;
-			}
-			else if (!inTag)
-			{
-				builder.append(currentChar);
-			}
-		}
-
-		return builder.toString();
 	}
 
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		if (e.getKeyCode() == HOTKEY)
+		{
+			plugin.updateNpcMenuOptions(true);
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		if (e.getKeyCode() == HOTKEY)
+		{
+			plugin.updateNpcMenuOptions(false);
+		}
+	}
 }

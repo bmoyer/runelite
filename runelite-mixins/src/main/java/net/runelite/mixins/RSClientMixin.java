@@ -62,6 +62,7 @@ import net.runelite.api.events.ExperienceChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GrandExchangeOfferChanged;
 import net.runelite.api.events.MapRegionChanged;
+import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.PlayerMenuOptionsChanged;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.VarbitChanged;
@@ -327,7 +328,7 @@ public abstract class RSClientMixin implements RSClient
 			entry.setOption(menuOptions[i]);
 			entry.setTarget(menuTargets[i]);
 			entry.setIdentifier(menuIdentifiers[i]);
-			entry.setType(MenuAction.of(menuTypes[i]));
+			entry.setType(menuTypes[i]);
 			entry.setParam0(params0[i]);
 			entry.setParam1(params1[i]);
 		}
@@ -351,7 +352,7 @@ public abstract class RSClientMixin implements RSClient
 			menuOptions[count] = entry.getOption();
 			menuTargets[count] = entry.getTarget();
 			menuIdentifiers[count] = entry.getIdentifier();
-			menuTypes[count] = entry.getType().getId();
+			menuTypes[count] = entry.getType();
 			params0[count] = entry.getParam0();
 			params1[count] = entry.getParam1();
 			++count;
@@ -660,5 +661,19 @@ public abstract class RSClientMixin implements RSClient
 	public static void clanMemberManagerChanged(int idx)
 	{
 		eventBus.post(new ClanChanged(client.getClanMemberManager() != null));
+	}
+
+	@FieldHook("isMenuOpen")
+	@Inject
+	public static void menuOpened(int opened)
+	{
+		if (!client.isMenuOpen())
+		{
+			return;
+		}
+
+		MenuOpened event = new MenuOpened();
+		event.setMenuEntries(client.getMenuEntries());
+		eventBus.post(event);
 	}
 }
